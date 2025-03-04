@@ -3,7 +3,7 @@ const app = express();
 const port = 3000;
 
 // MATLAB Code Snippets Response
-const matlabSnippets = {
+const matlabSnippets = 
 "
 import numpy as np
 import pandas as pd
@@ -273,8 +273,6 @@ for rule in rules:
 "
 
 
-
-};
 
 
 

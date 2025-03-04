@@ -4,7 +4,7 @@ const port = 3000;
 
 // MATLAB Code Snippets Response
 const matlabSnippets = {
-`
+"
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -270,10 +270,7 @@ for rule in rules:
 
 
 
-
-
-
-`
+"
 
 
 

@@ -1,0 +1,266 @@
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+print("KANVI PANCHAL TYCS - 542")
+
+data = pd.read_csv("D:/TYCS - 542/DS/Dataset/Salary_Data.csv")
+x, y = data['YearsExperience'], data['Salary']
+print(data.head())
+
+B1 = np.cov(x, y, bias=True)[0, 1] / np.var(x, ddof=0)
+B0 = y.mean() - B1 * x.mean()
+R = np.corrcoef(x, y)[0, 1]
+
+print(f"Regression line: y = {B0:.3f} + {B1:.3f}x")
+print(f"Correlation Coeff: {R:.4f}")
+print(f"GOODNESS OF FIT: {R ** 2:.4f}")
+
+plt.figure(figsize=(12, 5))
+plt.scatter(x, y, s=300, edgecolor="black")
+plt.plot(x, B0 + B1 * x, 'r', linewidth=5, alpha=0.5)
+plt.scatter(x.mean(), y.mean(), marker='*', s=100, c='r')
+plt.text(1, 100000, f"x Mean: {x.mean():.2f} Years\n" 
+         f"y Mean: {y.mean():.2f}\nR: {R:.4f}\nR^2: {R**2:.4f}\n"
+         f"y = {B0:.3f} + {B1:.3f}x", fontsize=12, 
+         bbox={'facecolor': 'grey', 'alpha': 0.2, 'pad': 10})
+plt.title('How Experience Affects Salary')
+plt.xlabel('Years of Experience', fontsize=15)
+plt.ylabel('Salary', fontsize=15)
+plt.show()
+
+print(f"Predicted Salary for 55 years of experience: {B0 + B1 * 55:.2f}")
+
+
+
+
+
+
+
+Practical  2: Simple Logistics Regression. - Admission Dataset  
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix
+
+# Load dataset
+df = pd.read_csv("Admission_Data.csv")
+print(df)
+
+# Define features and target
+x, y = df[['gmat', 'gpa', 'work_experience']], df['admitted']
+
+# Split data
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.25, random_state=0)
+
+# Train and predict
+l_r = LogisticRegression().fit(x_train, y_train)
+y_pred = l_r.predict(x_test)
+
+# Print results
+print(pd.crosstab(y_test, y_pred, rownames=['Actual'], colnames=['Predicted']))
+print('Accuracy:', accuracy_score(y_test, y_pred))
+
+
+
+Practical 3: K - Means Clustering.  - CountryCluster Dataset
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.cluster import KMeans
+
+print('KANVI PANCHAL - TYCS 542')
+
+# Load data
+data = pd.read_csv("Countryclusters.csv")
+
+# Scatter plot of locations
+plt.scatter(data['Longitude'], data['Latitude'])
+plt.xlim(-180, 180)
+plt.ylim(-90, 90)
+plt.show()
+
+# K-Means Clustering
+x = data.iloc[:, 1:3]
+kmeans = KMeans(n_clusters=3, random_state=0).fit(x)
+data['Clusters'] = kmeans.labels_
+
+# Plot clustered data
+plt.scatter(data['Longitude'], data['Latitude'], c=data['Clusters'], cmap='rainbow')
+plt.show()
+
+
+
+
+Practical 4: Time Series Analysis Forecasting. - AirPassenger Dataset 
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
+
+# Load data
+df = pd.read_csv("AirPassengers.csv", parse_dates=['Month'], index_col='Month')
+print(df.head(), df.tail())
+
+# Query and plot specific month
+may_flights = df.loc['1949-02']
+sns.lineplot(data=may_flights, x=may_flights.index, y="#Passengers")
+plt.title('Air Passengers in August 1951')
+plt.show()
+
+# Plot entire dataset
+sns.lineplot(data=df, x=df.index, y="#Passengers")
+plt.title('Air Passengers Over Time')
+plt.show()
+
+
+
+
+
+Practical 5: Principal Component Analysis (PCA).
+
+import numpy as np
+from sklearn.decomposition import PCA
+
+print('KANVI PANCHAL - TYCS 542')
+
+x = np.array([[-1,-1], [-2,-1], [-3,-2], [1,1], [2,1], [3,2]])
+
+for n in [2, 2, 1]:
+    pca = PCA(n_components=n, svd_solver='full' if n == 2 else 'arpack')
+    pca.fit(x)
+    print(f"Components: {n}, Variance Ratio: {pca.explained_variance_ratio_}, Singular Values: {pca.singular_values_}")
+
+
+
+
+
+Practical 6: Decision Tree - Iris Dataset
+
+import pandas as pd, seaborn as sns, matplotlib.pyplot as plt  
+from keras.models import Sequential  
+from keras.layers import Dense  
+from sklearn.model_selection import train_test_split  
+from sklearn.preprocessing import LabelEncoder  
+from keras.utils import to_categorical  
+
+
+df = pd.read_csv("Dataset/Iris.csv")  
+
+
+sns.pairplot(df, hue="Species"); plt.show()  
+
+
+X, y = df.iloc[:, 1:5].values, to_categorical(LabelEncoder().fit_transform(df.iloc[:, 5]))  
+
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)  
+
+
+model = Sequential([Dense(40, activation='relu', input_shape=(4,)), Dense(20, activation='relu'), Dense(3, activation='softmax')])  
+
+
+model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])  
+
+
+model.fit(X_train, y_train, epochs=10, verbose=1)  
+
+
+print(f"\nAccuracy: {model.evaluate(X_test, y_test, verbose=0)[1] * 100:.2f}%")  
+
+
+
+
+
+Practical 6: Decision Tree - Diabetes Dataset
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.metrics import accuracy_score
+
+
+# Load dataset
+data = pd.read_csv("Dataset/diabetes (1).csv")
+
+
+# Preprocess Data
+X = StandardScaler().fit_transform(data.iloc[:, :-1])  # Features
+y = data.iloc[:, -1]  # Target
+
+
+# Define entropy and gini index functions
+entropy = lambda y: -np.sum((np.unique(y, return_counts=True)[1] / len(y)) * np.log2(np.unique(y, return_counts=True)[1] / len(y)))
+gini = lambda y: 1 - np.sum((np.unique(y, return_counts=True)[1] / len(y))**2)
+
+
+# Print entropy and gini index
+print(f"\nEntropy: {entropy(y):.4f}, Gini Index: {gini(y):.4f}")
+
+
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+
+
+# Train Decision Tree Classifier
+tree_model = DecisionTreeClassifier(criterion='gini', max_depth=4, random_state=0).fit(X_train, y_train)
+
+
+# Evaluate model
+print(f"\nTest Accuracy: {accuracy_score(y_test, tree_model.predict(X_test)) * 100:.2f}%")
+# Plot Decision Tree
+plt.figure(figsize=(20, 10))
+plot_tree(tree_model, feature_names=data.columns[:-1], class_names=["No Diabetes", "Diabetes"], filled=True, rounded=True)
+plt.title("Decision Tree for Diabetes Classification")
+plt.show()
+
+
+
+
+Practical 7: Naive Bayes Algorithm.
+
+from sklearn.preprocessing import LabelEncoder
+print("PANCHAL KANVI - TYCS 542\n")
+
+
+weather = ['sunnny', 'sunny', 'overcast', 'rainy', 'rainy', 'rainy', 'overcast', 'sunny', 'sunny', 'rainy', 'sunny', 'overcast', 'overcast', 'rainy']
+temp = ['hot', 'hot', 'hot', 'mild', 'cool', 'cool', 'cool', 'mild', 'cool', 'mild', 'mild', 'mild', 'hot', 'mild']
+play = ['no', 'no', 'yes', 'yes', 'yes', 'no', 'yes', 'no', 'yes', 'yes', 'yes', 'yes', 'yes', 'no']
+
+
+le = LabelEncoder()
+print("Weather:", le.fit_transform(weather))
+print("Temp:", le.fit_transform(temp))
+print("Play:", le.fit_transform(play))
+
+
+
+
+Practical 8: association rules using Apriori Algorithm 
+
+import pandas as pd  
+from apyori import apriori
+transactions = [  
+    ['milk', 'bread', 'butter'], ['bread', 'butter'], ['milk', 'bread'],  
+    ['milk', 'butter'], ['bread', 'butter', 'jam'], ['milk', 'bread', 	'butter', 'jam']  
+]  
+
+
+rules = list(apriori(transactions, min_support=0.3, min_confidence=0.5, min_lift=1.2, min_length=2))  
+
+
+print(f"\nTotal Rules Found: {len(rules)}\n")  
+for rule in rules:  
+    print(f"Rule: {list(rule.items)} | Support: {rule.support:.4f}")  
+    for r in rule.ordered_statistics:  
+        print(f"Confidence: {r.confidence:.4f} | Lift: {r.lift:.4f}")  
+    print("=" * 40)
+
+
+
